@@ -13,6 +13,7 @@
 #include <SDL_events.h>
 #include "guis/GuiInfoPopup.h"
 #include "components/AsyncNotificationComponent.h"
+#include "components/BatteryIndicatorComponent.h"
 #include "guis/GuiMsgBox.h"
 #include "AudioManager.h"
 
@@ -117,6 +118,9 @@ bool Window::init(bool initRenderer)
 		mClock->setSize(Renderer::getScreenWidth()*0.05, 0);
 		mClock->setColor(0x777777FF);
 	}
+
+	if (mBatteryIndicator == nullptr)
+		mBatteryIndicator = std::make_shared<BatteryIndicatorComponent>(this);
 
 	// update our help because font sizes probably changed
 	if (peekGui())
@@ -314,6 +318,9 @@ void Window::update(int deltaTime)
 	if(peekGui())
 		peekGui()->update(deltaTime);
 
+	if (mBatteryIndicator)
+		mBatteryIndicator->update(deltaTime);
+
 	// Update the screensaver
 	if (mScreenSaver)
 		mScreenSaver->update(deltaTime);
@@ -373,6 +380,9 @@ void Window::render()
 		mClockFont->renderTextCache(mClockText.get());*/
 	}
 
+	if (mBatteryIndicator != nullptr && (mGuiStack.size() < 2 || !Renderer::isSmallScreen()))
+		mBatteryIndicator->render(transform);
+	
 	// pads // batocera
 	Renderer::setMatrix(Transform4x4f::Identity());
 
@@ -813,4 +823,7 @@ void Window::onThemeChanged(const std::shared_ptr<ThemeData>& theme)
 
 		mClock->applyTheme(theme, "screen", "clock", ThemeFlags::ALL ^ (ThemeFlags::TEXT));
 	}
+
+	if (mBatteryIndicator)
+		mBatteryIndicator->applyTheme(theme, "screen", "batteryIndicator", ThemeFlags::ALL);
 }
