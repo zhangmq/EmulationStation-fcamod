@@ -166,9 +166,9 @@ namespace Renderer
 		windowWidth = 480;
 		windowHeight = 320;
 		screenWidth = 480;
-		screenHeight = 320 - 16;
+		screenHeight = 320;
 		screenOffsetX = 0;
-		screenOffsetY = 0 + 16;
+		screenOffsetY = 0;
 		screenRotate = 0;
 
 		setupWindow();
